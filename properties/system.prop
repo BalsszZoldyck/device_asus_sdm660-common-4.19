@@ -75,6 +75,9 @@ ro.netflix.bsp_rev=Q660-13149-1
 # NTP Server
 persist.backup.ntpServer="0.pool.ntp.org"
 
+# Perf
+vendor.perf.gestureflingboost.enable=true
+
 # QC framework value-adds
 ro.vendor.qti.va_aosp.support=1
 
