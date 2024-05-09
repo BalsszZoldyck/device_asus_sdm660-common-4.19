@@ -152,8 +152,8 @@
          available on some devices. -->
     <bool name="config_enableHapticTextHandle">true</bool>
 
-    <!-- Should the pinner service pin the Home application? -->
-    <bool name="config_pinnerHomeApp">false</bool>
+    <!-- Bytes that the PinnerService will pin for Home app -->
+    <integer name="config_pinnerHomePinBytes">6291456</integer>
 
     <!-- Whether the Unprocessed audio source supports the required frequency range and level -->
     <bool name="config_supportAudioSourceUnprocessed">true</bool>
