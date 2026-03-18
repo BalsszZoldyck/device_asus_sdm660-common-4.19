@@ -443,10 +443,6 @@ PRODUCT_PACKAGES += \
     libsqlite.vendor:64 \
     libsysutils.vendor
 
-# Remove unwanted packages
-PRODUCT_PACKAGES += \
-    RemovePackages
-
 # Recovery
 PRODUCT_PACKAGES += \
     librecovery_updater_asus
