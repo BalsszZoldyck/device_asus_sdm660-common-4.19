@@ -9,9 +9,8 @@ audio.safemedia.bypass=true
 audio.offload.min.duration.secs=30
 persist.vendor.audio.hac.enable=false
 persist.vendor.audio_hal.dsp_bit_width_enforce_mode=24
-ro.config.media_vol_steps=25
-ro.config.vc_call_vol_steps=14
-ro.config.alarm_vol_steps=25
+ro.audio.jack.detection=true
+persist.audio.jack.event=1
 
 # Bluetooth
 vendor.bluetooth.soc=cherokee
@@ -88,9 +87,6 @@ persist.radio.VT_CAM_INTERFACE=2
 persist.sys.fflag.override.settings_network_and_internet_v2=true
 ril.subscription.types=NV,RUIM
 telephony.lteOnCdmaDevice=1
-
-# System Server
-persist.arm64.memtag.system_server=off
 
 # Time
 persist.timed.enable=true
