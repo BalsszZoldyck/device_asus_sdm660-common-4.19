@@ -9,9 +9,8 @@ audio.safemedia.bypass=true
 audio.offload.min.duration.secs=30
 persist.vendor.audio.hac.enable=false
 persist.vendor.audio_hal.dsp_bit_width_enforce_mode=24
-ro.config.media_vol_steps=25
-ro.config.vc_call_vol_steps=14
-ro.config.alarm_vol_steps=25
+ro.audio.jack.detection=true
+persist.audio.jack.event=1
 
 # Bluetooth
 vendor.bluetooth.soc=cherokee
@@ -43,6 +42,9 @@ ro.com.google.clientidbase.ms=android-asus-tpin
 ro.com.google.rlzbrandcode=ASUP
 ro.com.google.rlz_ap_whitelist=y0,y5,y6,y7,y9
 
+# Filesystem
+fs_mgr.overlayfs.prefer_cache_backing_storage=true
+
 # GPS
 persist.vendor.overlay.izat.optin=rro
 
@@ -53,19 +55,6 @@ debug.sf.predict_hwc_composition_strategy=0
 persist.demo.hdmirotationlock=false
 persist.hwc.enable_vds=1
 sdm.debug.disable_skip_validate=1
-
-# HWUI
-ro.hwui.texture_cache_size=72
-ro.hwui.layer_cache_size=48
-ro.hwui.r_buffer_cache_size=8
-ro.hwui.path_cache_size=32
-ro.hwui.gradient_cache_size=1
-ro.hwui.drop_shadow_cache_size=6
-ro.hwui.texture_cache_flushrate=0.4
-ro.hwui.text_small_cache_width=1024
-ro.hwui.text_small_cache_height=1024
-ro.hwui.text_large_cache_width=2048
-ro.hwui.text_large_cache_height=2048
 
 # IMS
 persist.dbg.ims_volte_enable=1
@@ -85,6 +74,10 @@ ro.netflix.bsp_rev=Q660-13149-1
 
 # NTP Server
 persist.backup.ntpServer="0.pool.ntp.org"
+
+# Perf
+ro.vendor.qti.sys.fw.bg_apps_limit=32
+vendor.perf.gestureflingboost.enable=true
 
 # QC framework value-adds
 ro.vendor.qti.va_aosp.support=1

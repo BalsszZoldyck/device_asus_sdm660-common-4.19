@@ -99,7 +99,7 @@ namespace qcamera {
 #define REGIONS_TUPLE_COUNT    5
 #define HDR_PLUS_PERF_TIME_OUT  (7000) // milliseconds
 // Set a threshold for detection of missing buffers //seconds
-#define MISSING_REQUEST_BUF_TIMEOUT 3
+#define MISSING_REQUEST_BUF_TIMEOUT 10
 #define MISSING_BOKEH_REQUEST_BUF_TIMEOUT 5
 #define FLUSH_TIMEOUT 3
 #define METADATA_MAP_SIZE(MAP) (sizeof(MAP)/sizeof(MAP[0]))
@@ -136,6 +136,9 @@ namespace qcamera {
 
 #define UBWC_COMP_RATIO 1.26
 #define PERF_CONFIG_PATH "/vendor/etc/camera/cameraconfig.txt"
+
+// Whether to check for the GPU stride padding, or use the default
+//#define CHECK_GPU_PIXEL_ALIGNMENT
 
 cam_capability_t *gCamCapability[MM_CAMERA_MAX_NUM_SENSORS];
 const camera_metadata_t *gStaticMetadata[MM_CAMERA_MAX_NUM_SENSORS];
@@ -582,7 +585,8 @@ QCamera3HardwareInterface::QCamera3HardwareInterface(uint32_t cameraId,
     //Load and read GPU library.
     lib_surface_utils = NULL;
     LINK_get_surface_pixel_alignment = NULL;
-    mSurfaceStridePadding = CAM_PAD_TO_32;
+    mSurfaceStridePadding = CAM_PAD_TO_64;
+#ifdef CHECK_GPU_PIXEL_ALIGNMENT
     lib_surface_utils = dlopen("libadreno_utils.so", RTLD_NOW);
     if (lib_surface_utils) {
         *(void **)&LINK_get_surface_pixel_alignment =
@@ -592,6 +596,7 @@ QCamera3HardwareInterface::QCamera3HardwareInterface(uint32_t cameraId,
          }
          dlclose(lib_surface_utils);
     }
+#endif
 
     m_bInSensorQCFA = false;
     if (gCamCapability[cameraId]->is_quadracfa_sensor) {
@@ -3220,8 +3225,12 @@ int QCamera3HardwareInterface::configureStreamsPerfLocked(
                         bufferCount = MAX_INFLIGHT_REQUESTS;
                         if (mStreamConfigInfo[index].type[stream_index] ==
                                 CAM_STREAM_TYPE_VIDEO) {
-                            if (m_bEis3PropertyEnabled /* hint for EIS 3 needed here */)
-                                bufferCount = MAX_VIDEO_BUFFERS;
+                            if (m_bEis3PropertyEnabled /* hint for EIS 3 needed here */) {
+                                // WAR: 4K video can only run <=30fps, reduce the buffer count.
+                                bufferCount = m_bIs4KVideo ?
+                                    MAX_30FPS_VIDEO_BUFFERS : MAX_VIDEO_BUFFERS;
+                            }
+
                         }
 
                         if (isSecureMode()) {
@@ -8634,6 +8643,7 @@ no_error:
         if (channel == NULL) {
             LOGE("invalid channel pointer for stream");
             assert(0);
+            pthread_mutex_unlock(&mMutex);
             return BAD_VALUE;
         }
 
@@ -8711,6 +8721,7 @@ no_error:
         } else {
             LOGE("Internal requests not supported on this stream type");
             assert(0);
+            pthread_mutex_unlock(&mMutex);
             return INVALID_OPERATION;
         }
         latestRequest->internalRequestList.push_back(requestedStream);
@@ -13011,7 +13022,7 @@ int QCamera3HardwareInterface::initStaticMetadata(uint32_t cameraId)
         available_result_keys.add(ANDROID_STATISTICS_FACE_LANDMARKS);
     }
 #ifndef USE_HAL_3_3
-    if (hasBlackRegions) {
+    {
         available_result_keys.add(ANDROID_SENSOR_DYNAMIC_BLACK_LEVEL);
         available_result_keys.add(ANDROID_SENSOR_DYNAMIC_WHITE_LEVEL);
     }
@@ -16739,6 +16750,21 @@ int QCamera3HardwareInterface::validateStreamRotations(
     */
     for (size_t j = 0; j < streamList->num_streams; j++){
         camera3_stream_t *newStream = streamList->streams[j];
+
+        switch(newStream->rotation) {
+            case CAMERA3_STREAM_ROTATION_0:
+            case CAMERA3_STREAM_ROTATION_90:
+            case CAMERA3_STREAM_ROTATION_180:
+            case CAMERA3_STREAM_ROTATION_270:
+                //Expected values
+                break;
+            default:
+                ALOGE("%s: Error: Unsupported rotation of %d requested for stream"
+                        "type:%d and stream format:%d", __func__,
+                        newStream->rotation, newStream->stream_type,
+                        newStream->format);
+                return -EINVAL;
+        }
 
         bool isRotated = (newStream->rotation != CAMERA3_STREAM_ROTATION_0);
         bool isImplDef = (newStream->format ==

@@ -267,7 +267,7 @@ PRODUCT_PACKAGES += \
 
 # Lights
 PRODUCT_PACKAGES += \
-    android.hardware.light-service.asus_sdm660
+    android.hardware.light-service.lineage
 
 # Lineage Health
 PRODUCT_PACKAGES += \
@@ -443,10 +443,6 @@ PRODUCT_PACKAGES += \
     libsqlite.vendor:64 \
     libsysutils.vendor
 
-# Remove unwanted packages
-PRODUCT_PACKAGES += \
-    RemovePackages
-
 # Recovery
 PRODUCT_PACKAGES += \
     librecovery_updater_asus
@@ -478,7 +474,7 @@ PRODUCT_PACKAGES += \
 
 # Screen density
 PRODUCT_AAPT_CONFIG := normal
-PRODUCT_AAPT_PREF_CONFIG ?= xhdpi
+PRODUCT_AAPT_PREF_CONFIG ?= xxhdpi
 
 # Seccomp
 PRODUCT_COPY_FILES += \

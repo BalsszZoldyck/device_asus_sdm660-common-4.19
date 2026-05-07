@@ -20,27 +20,22 @@ bluetooth.profile.pan.panu.enabled=true
 bluetooth.profile.pbap.server.enabled=true
 bluetooth.profile.sap.server.enabled=true
 
-# LMKD
-ro.lmk.use_psi=true
-ro.lmk.use_minfree_levels=false
-ro.lmk.kill_heaviest_task=true
-ro.lmk.kill_timeout_ms=100
-ro.lmk.filecache_min_kb=300000
-ro.lmk.log_stats=false
-ro.lmk.psi_complete_stall_ms=50
-ro.lmk.psi_partial_stall_ms=50
-ro.lmk.swap_util_max=90
-ro.lmk.thrashing_limit=50
-ro.lmk.thrashing_limit_decay=25
-
-# enable debugging
+# Enable debugging
 persist.sys.usb.config=mtp,adb
 ro.adb.secure=0
 ro.debuggable=1
 
+# FUSE Passthrough
+persist.sys.fuse.passthrough.enable=true
+
+# LMKD
+ro.lmk.use_psi=true
+ro.lmk.psi_partial_stall_ms=70
+ro.lmk.psi_complete_stall_ms=700
+ro.config.low_ram=false
+ro.lmk.kill_heaviest_task=true
+ro.lmk.kill_timeout_ms=100
+
 # Telephony
 # Disable handling audio direction changes on IMS calls.
 ro.telephony.handle_audio_direction_changes_between_call_state_changes=false
-
-# FUSE Passthrough
-persist.sys.fuse.passthrough.enable=true
